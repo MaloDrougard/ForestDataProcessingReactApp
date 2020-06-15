@@ -47,20 +47,16 @@ const TextAreaS = styled.textarea`
 class DownloadForm extends Component {
 
     state = {
-        files : null,
-        json : null,
+        files: null,
     }; 
 
     constructor(props) {
         super(props);
-        if (props.fileType === undefined) {
-            console.warn("DownloadForm must have a fileType given as props");
+        if(props.loader === undefined) {
+            console.warn("DownloadForm must have a obj given as props");
         }
-        this.filereader = new FileReader();
-        this.filereader.onload = (e) => { 
-            this.state.setState( {json: JSON.parse(e.target.result) }) ;
-            
-        }
+      
+     
     }
 
         
@@ -70,22 +66,21 @@ class DownloadForm extends Component {
             <Container>
             <InputS type="file"  
                 onChange={ (e) => {
-                    console.log(e.target.files[0]);
                     this.setState({files: e.target.files}); }} />
             <ButtonS id="importBtn" 
                 onClick={ () => {
-                    console.log("dafdssa");
+                    console.log("Import clicked");
                     if (this.state.files && this.state.files[0]) {
-                        this.filereader.readAsText(this.state.files[0]);
+                        this.props.loader.onImport(this.state.files[0])  
                     }else {
                         console.log("No file is present")
                     }
                 }
                 }>
-                Import {this.props.fileType} 
+                Import 
             </ButtonS>
             <TextAreaS id="view">
-                {this.state.json}
+               
             </TextAreaS>
             </Container>
         );
