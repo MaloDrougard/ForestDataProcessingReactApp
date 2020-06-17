@@ -1,7 +1,11 @@
 import React, {Component} from 'react';
 import './App.css';
 
-import DownloadForm from './components/DownloadForm'
+import DownloadForm, {JSONLoader, PNGLoader} from './components/DownloadForm'
+import styled from '@emotion/styled';
+
+
+
 
 
 import { createWorker } from 'tesseract.js';
@@ -23,48 +27,68 @@ const worker = createWorker({
 */
 
 
-function Loader(onSuccess) { 
 
-  console.log("Loader constructor called"); 
 
-  this.filereader = new FileReader(); 
-  this.filereader.onload = (e) => { 
-    console.log("Loader: onload called");
-    const result = JSON.parse(this.filereader.result); 
-    onSuccess(result); 
-  }
-  this.onImport = (file) => {
-    console.log("Loader: onImport called");
-    this.filereader.readAsText(file);     
-  }
-  
+
+const Container = styled.div`
+    display:inline-block;
+    width: 100vw;
+`
+
+const SView = styled.div`
+   display: block;
+   width: 100%;
+   margin:0px;
+   border:0px;  
+`
+
+const SImg = styled.img`
+  width:100%;
+`
+
+function InputGenertator(title,loader, view ) {
+  return(
+    <Container>
+      <h4>{title}</h4>
+      <DownloadForm loader={loader}>
+      </DownloadForm>
+      <SView>
+        {view}
+      </SView>
+    </Container>
+  ); 
 
 
 }
-
 
 class App extends Component {
   
 
   state = {
     json : null,
+    png: null,
   }
 
-
-  jsonLoader = new Loader((result)=>{
-    console.log("jsonLoader on Success: ");
+  jsonLoader = new JSONLoader((result)=>{
     let newState = {... this.state};
     newState.json = result; 
     this.setState(newState ); 
   }); 
-
+ 
+  pngLoader = new PNGLoader( (result)=>{
+    let newState = {... this.state};
+    newState.png = result; 
+    this.setState(newState ); 
+  }); 
   
+
+
   render() {
     return (
       <div className="App">      
-        <DownloadForm fileType="JSON" loader={this.jsonLoader} ></DownloadForm>
-        <div>{this.state.counter}</div>
-        <button onClick={()=>this.setState({counter: this.state.counter+1})}></button>
+        {InputGenertator("Jhon Json", this.jsonLoader, JSON.stringify(this.state.json))}
+        {InputGenertator("Image marker", this.pngLoader, <SImg src={this.state.png} alt="no image loaded"></SImg>) }
+        
       </div>
     );
     
