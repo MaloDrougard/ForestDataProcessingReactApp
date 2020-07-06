@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import styled from '@emotion/styled';
 
-
+import CSVToArray from '../DataProcessing/csvToArray'; 
 
 
 const Container = styled.div`
@@ -25,11 +25,7 @@ const ButtonS = styled.button`
 */
 class DownloadForm extends Component {
     
-    state = {
-        files: null,
-    }; 
-
-    constructor(props) {
+      constructor(props) {
         super(props);
         if(props.loader === undefined) {
             console.warn("DownloadForm must have loader given as props, loader implement the onImport method to real import the data");
@@ -43,19 +39,12 @@ class DownloadForm extends Component {
             <Container>
             <InputS type="file"  
                 onChange={ (e) => {
-                    this.setState({files: e.target.files}); }} />
-            <ButtonS id="importBtn" 
-                onClick={ () => {
-                    console.log("Import clicked");
-                    if (this.state.files && this.state.files[0]) {
-                        this.props.loader.onImport(this.state.files[0])  
+                    if ( e.target.files[0]) {
+                        this.props.loader.onImport(e.target.files[0])  
                     }else {
                         console.log("No file is present")
                     }
-                }
-            }>
-                Import 
-            </ButtonS>
+            }} />
             </Container>
         );
 }
@@ -108,10 +97,29 @@ function PNGLoader(onSuccess) {
       this.filereader.readAsDataURL(file);     
     }
 }
+
+function CSVLoader(onSuccess) {
+    console.log("Loader constructor called"); 
+    this.data = null; 
+
+    this.filereader = new FileReader(); 
+
+    this.filereader.onload = (e) => { 
+      console.log("Loader: onload called"); 
+      this.data = CSVToArray(this.filereader.result); 
+      onSuccess(this.data); 
+    }
+    this.onImport = (file) => {
+      console.log("Loader: onImport called");
+      this.data = null; 
+      this.filereader.readAsText(file);     
+    }
+
+}
   
 
 
 
 
-export {JSONLoader, PNGLoader};
+export {JSONLoader, PNGLoader, CSVLoader};
 export default DownloadForm;

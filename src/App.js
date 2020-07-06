@@ -1,34 +1,12 @@
 import React, {Component} from 'react';
 import './App.css';
 
-import DownloadForm, {JSONLoader, PNGLoader} from './components/DownloadForm'
+import DownloadForm, { PNGLoader, CSVLoader} from './components/DownloadForm'
 import styled from '@emotion/styled';
 
-
-
-
-
-import { createWorker } from 'tesseract.js';
-
-/*
-const worker = createWorker({
-  logger: m => console.log(m)
-});
-
-
-(async () => {
-  await worker.load();
-  await worker.loadLanguage('eng');
-  await worker.initialize('eng');
-  const { data: { text } } = await worker.recognize('https://tesseract.projectnaptha.com/img/eng_bw.png');
-  console.log(text);
-  await worker.terminate();
-})();
-*/
-
-
-
-
+import GenerateTSV from './DataProcessing/generatePositionsFromPng'; 
+import CSVToArray from './DataProcessing/csvToArray'; 
+import {csvArrayToObjArray, merge} from './DataProcessing/mergePositionAndCSVData'; 
 
 const Container = styled.div`
     display:inline-block;
@@ -57,43 +35,60 @@ function InputGenertator(title,loader, view ) {
       </SView>
     </Container>
   ); 
-
-
 }
 
 class App extends Component {
-  
-
   state = {
-    json : null,
     png: null,
-  }
+    csv: null, 
+    tsv: null, 
+    result: null, 
+  };
 
-  jsonLoader = new JSONLoader((result)=>{
-    let newState = {... this.state};
-    newState.json = result; 
-    this.setState(newState ); 
-  }); 
- 
-  pngLoader = new PNGLoader( (result)=>{
-    let newState = {... this.state};
-    newState.png = result; 
-    this.setState(newState ); 
-  }); 
+
+  pngLoader = new PNGLoader((result) => {
+    let newState = { ...this.state };
+    newState.png = result;
+    this.setState(newState);
+  });
+
+  csvLoader = new CSVLoader((result) => {
+    let newState = { ...this.state };
+    newState.csv = result;
+    newState.result = csvArrayToObjArray(result); 
+    this.setState(newState);
+  })
+
   
+  callGenerateTSV  = async () => {
+    let tsv =  await GenerateTSV(this.state.png);
+    let newState = { ...this.state };
+    newState.tsv = CSVToArray(tsv, "\t") ;
+    this.setState(newState);
 
+  }
 
   render() {
     return (
-      <div className="App">      
-        {InputGenertator("Jhon Json", this.jsonLoader, JSON.stringify(this.state.json))}
-        {InputGenertator("Image marker", this.pngLoader, <SImg src={this.state.png} alt="no image loaded"></SImg>) }
+      <div className="App">
+
         
+        {InputGenertator(
+          "Jhon csv",
+          this.csvLoader,
+          this.state.csv,
+        )}
+        
+        {InputGenertator(
+          "Image marker",
+          this.pngLoader,
+          <SImg src={this.state.png} alt="no image loaded"></SImg>
+        )}
+
+        <button onClick={this.callGenerateTSV}>Generate TSV</button>
       </div>
     );
-    
   }
-
 }
 
 
