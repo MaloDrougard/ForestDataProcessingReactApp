@@ -1,3 +1,30 @@
+
+
+## Short
+
+This is app is used to proccess the data given by John in the project of virtualization of the pichu forest.
+
+## Technical
+
+It's a stande alone REACT app that does need a server :)
+
+## Usage and data process
+
+0. Prepare the data
+0.1 Create a csv file form the excel containing the length and height of each trunc
+0.2 Create a png that contain only the number id of trunc from the drone image given by John
+1. Import the csv in the app
+2. Import the markers
+3. Genrate the tsv (this step will process the image markers and extract the position)
+4. Merge (this will merge the csv and the position based on the trunc id)
+5. Download the resulting json 
+6. Import it in unity
+
+Trick: you can modify the the value of the markers or csv by directly modify it from the console using a react developer tools.
+
+
+
+
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
 ## Available Scripts
