@@ -49,7 +49,10 @@ const SView = styled.div`
 `
 
 const SImg = styled.img`
-  width:100%;
+   width:100%;
+`
+const SButton = styled.button`
+  display: block;
 `
 
 function InputGenertator(title,loader, view ) {
@@ -70,7 +73,7 @@ class App extends Component {
     png: null,
     excel: [], 
     markers: [], 
-    result: [], 
+    result: {}, 
   };
 
 
@@ -231,18 +234,31 @@ class App extends Component {
           data={this.state.markers}
           theme="solarized"
         />
-        <button onClick={
+        <SButton onClick={
           () => {
             let newState = { ...this.state };
-            newState.result = mergeMarkersAndExcel(this.state.markers, this.state.excel);
+            newState.result = {trees: mergeMarkersAndExcel(this.state.markers, this.state.excel)};
             this.setState(newState);
           }
         }>
           Merge
-        </button>
-        <DownloadableLink data={this.state.result} >
+        </SButton>
+        <SButton onClick={() => {
+          let result = this.state.result;
+          // tricky way to get height and width of image
+          var img = new Image();
+          img.src = this.state.png;
+          result.imageSize = {x: img.width, y:img.height}; 
 
+          let newState = { ...this.state };
+          newState.result = result;
+          this.setState(newState);
+        }}>
+          Add title infos
+        </SButton>
+        <DownloadableLink data={this.state.result} label="Download result">
         </DownloadableLink>
+
 
       </div>
     );
