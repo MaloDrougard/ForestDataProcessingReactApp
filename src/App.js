@@ -6,7 +6,7 @@ import styled from '@emotion/styled';
 
 import GenerateTSV from './DataProcessing/generatePositionsFromPng'; 
 import CSVToArray from './DataProcessing/csvToArray'; 
-import {csvArrayToObjArray, addIndexToArray } from './DataProcessing/mergePositionAndCSVData'; 
+import {hashArray, csvArrayToObjArray, addIndexToArray } from './DataProcessing/mergePositionAndCSVData'; 
 
 import DataTable, { createTheme } from 'react-data-table-component';
  
@@ -83,6 +83,9 @@ class App extends Component {
         Delete
       </span> ); 
   }
+
+
+
 
   pngLoader = new PNGLoader((result) => {
     let newState = { ...this.state };
@@ -181,11 +184,19 @@ class App extends Component {
       cell: (row) => ( this.deleteCellGenerator("excel", row) )  
     }
   ];
-  render() {
-    console.log("render called"); 
 
+  
+  render() {
+    console.log("in render");
     return (
       <div className="App">
+        <button onClick={() => {
+          console.log("RERENDER");
+          this.setState(this.state);
+        }
+        }>
+          RERENDER
+        </button>
 
         
         {InputGenertator(
@@ -195,7 +206,7 @@ class App extends Component {
         )}
 
           <DataTable
-          key={this.state.excel.length} // to force update
+          key={hashArray(this.state.excel)} // to force update
           title="Excel"
           columns={this.excelColumns}
           data={this.state.excel}
@@ -210,12 +221,13 @@ class App extends Component {
 
         <button onClick={this.callGenerateTSV}>Generate TSV</button>
         <DataTable
-          key={this.state.markers.length} // to force update
+          key={hashArray(this.state.markers)} // to force update
           title="Markers"
           columns={this.markersColumns}
           data={this.state.markers}
           theme="solarized"
         />
+
 
       </div>
     );

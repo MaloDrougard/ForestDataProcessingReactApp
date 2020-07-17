@@ -1,4 +1,23 @@
 
+
+/**
+ * Return a hash code of the array
+ * @param  array 
+ */
+function hashArray(array){
+    var hash = 0;
+    let s = JSON.stringify(array);
+    if (s.length == 0) return hash;
+    let char;  
+    for (let i = 0; i < s.length; i++) {
+        char = s.charCodeAt(i);
+        hash = ((hash<<5)-hash)+char;
+        hash = hash & hash; // Convert to 32bit integer
+    }
+    console.log("computed hash" + hash); 
+    return hash;
+} 
+
 function csvArrayToObjArray(csvArray, headersArray){
     let objectArray = []; 
     csvArray.forEach(a => {
@@ -23,4 +42,4 @@ function addIndexToArray(array){
 
 
 
-export {csvArrayToObjArray, addIndexToArray} ; 
+export {csvArrayToObjArray, addIndexToArray, hashArray} ; 
