@@ -52,7 +52,13 @@ const SImg = styled.img`
    width:100%;
 `
 const SButton = styled.button`
-  display: block;
+  display: inline;
+  border: 2px; 
+  border-color: black; 
+  border-style: solid;
+  position: sticky;
+  top: 0;
+  z-index:3;  
 `
 
 function InputGenertator(title,loader, view ) {
@@ -197,43 +203,14 @@ class App extends Component {
     console.log("in render");
     return (
       <div className="App">
-        <button onClick={() => {
+        <SButton onClick={() => {
           console.log("RERENDER");
           this.setState(this.state);
         }
         }>
           RERENDER
-        </button>
-
-        
-        {InputGenertator(
-          "Jhon csv",
-          this.csvLoader,
-          this.state.csv,
-        )}
-
-          <DataTable
-          key={hashArray(this.state.excel)} // to force update
-          title="Excel"
-          columns={this.excelColumns}
-          data={this.state.excel}
-          theme="solarized"
-        />
-        
-        {InputGenertator(
-          "Image marker",
-          this.pngLoader,
-          <SImg src={this.state.png} alt="no image loaded"></SImg>
-        )}
-
-        <button onClick={this.callGenerateTSV}>Generate TSV</button>
-        <DataTable
-          key={hashArray(this.state.markers)} // to force update
-          title="Markers"
-          columns={this.markersColumns}
-          data={this.state.markers}
-          theme="solarized"
-        />
+        </SButton>
+        <SButton onClick={this.callGenerateTSV}>Generate TSV</SButton>
         <SButton onClick={
           () => {
             let newState = { ...this.state };
@@ -256,8 +233,40 @@ class App extends Component {
         }}>
           Add title infos
         </SButton>
-        <DownloadableLink data={this.state.result} label="Download result">
-        </DownloadableLink>
+        <SButton>
+          <DownloadableLink data={this.state.result} label="Download result">
+          </DownloadableLink>
+        </SButton>
+        
+        {InputGenertator(
+          "Jhon csv",
+          this.csvLoader,
+          this.state.csv,
+        )}
+
+          <DataTable
+          key={hashArray(this.state.excel)} // to force update
+          title="Excel"
+          columns={this.excelColumns}
+          data={this.state.excel}
+          theme="solarized"
+        />
+        
+        {InputGenertator(
+          "Image marker",
+          this.pngLoader,
+          <SImg src={this.state.png} alt="no image loaded"></SImg>
+        )}
+
+     
+        <DataTable
+          key={hashArray(this.state.markers)} // to force update
+          title="Markers"
+          columns={this.markersColumns}
+          data={this.state.markers}
+          theme="solarized"
+        />
+
 
 
       </div>
