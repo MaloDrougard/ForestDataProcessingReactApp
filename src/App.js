@@ -2,13 +2,17 @@ import React, {Component} from 'react';
 import './App.css';
 
 import DownloadForm, { PNGLoader, CSVLoader} from './components/DownloadForm'
+import DownloadableLink from './components/DownloadableLink'
 import styled from '@emotion/styled';
 
 import GenerateTSV from './DataProcessing/generatePositionsFromPng'; 
 import CSVToArray from './DataProcessing/csvToArray'; 
-import {hashArray, csvArrayToObjArray, addIndexToArray } from './DataProcessing/mergePositionAndCSVData'; 
+import {hashArray, csvArrayToObjArray, addIndexToArray } from './DataProcessing/arrayHelpers'; 
 
 import DataTable, { createTheme } from 'react-data-table-component';
+
+import mergeMarkersAndExcel from './DataProcessing/mergeMarkersAndExcel'; 
+
  
 createTheme('solarized', {
   text: {
@@ -227,7 +231,18 @@ class App extends Component {
           data={this.state.markers}
           theme="solarized"
         />
+        <button onClick={
+          () => {
+            let newState = { ...this.state };
+            newState.result = mergeMarkersAndExcel(this.state.markers, this.state.excel);
+            this.setState(newState);
+          }
+        }>
+          Merge
+        </button>
+        <DownloadableLink data={this.state.result} >
 
+        </DownloadableLink>
 
       </div>
     );
